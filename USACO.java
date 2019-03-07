@@ -2,7 +2,7 @@ import java.util.*;
 import java.io.*;
 public class  USACO {
   public static void main(String[] args) {
-    bronze("makelake.1.in");
+    System.out.println(bronze("makelake.1.in"));
   }
 
   public static int bronze(String filename) {
@@ -47,11 +47,10 @@ public class  USACO {
       }
 
       //Calling the Digs
-      System.out.println("BEFORE: ");
-      printArr(elevations);
       executeDigs(moves, elevations);
-      System.out.println("AFTER: ");
-      printArr(elevations);
+
+      //Calculating the total volume and returning
+      return findVolume(elevations, e);
     }
     catch (FileNotFoundException t) {
       System.out.println("File not found... make sure file name is correct.");
@@ -88,6 +87,17 @@ public class  USACO {
       }
     }
     return output;
+  }
+
+  private static int findVolume(int[][] elevations, int height) {
+    //Finding the total depth
+    int totalDepth = 0;
+    for (int x[]: elevations) {
+      for (int y: x) {
+        if (y < height) totalDepth += height - y;
+      }
+    }
+    return totalDepth * 72 * 72;
   }
 
   private static void printArr(int[][] arr) {
