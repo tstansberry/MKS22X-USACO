@@ -1,8 +1,8 @@
 import java.util.*;
 import java.io.*;
 public class  USACO {
-  public static void main(String[] args) {
-    System.out.println(bronze("makelake.1.in"));
+  public static void main(String[] args) throws FileNotFoundException{
+    System.out.println(silver("ctravel.2.in"));
   }
 
   public static int bronze(String filename) {
@@ -61,8 +61,8 @@ public class  USACO {
 
   private static void executeDigs(int[][] directions, int[][] elevations) {
     for (int[] x: directions) {
-      x[0] --;
-      x[1] --;
+      x[0] = x[0] - 1;
+      x[1] = x[1] - 1;
       dig(x[0], x[1], x[2], elevations);
     }
   }
@@ -72,7 +72,7 @@ public class  USACO {
     for (int x = 0; x < depth; x ++) {
       for (int y = r; y < r + 3; y ++) {
         for (int z = c; z < c + 3; z ++) {
-          if (elevations[y][z] >= highest) elevations[y][z] --;
+          if (elevations[y][z] == highest) elevations[y][z] --;
         }
       }
       highest --;
@@ -109,5 +109,101 @@ public class  USACO {
       output += "\n";
     }
     System.out.println(output);
+  }
+
+  //PROBLEM 2
+  public static int silver(String filename) throws FileNotFoundException{
+    int[][] field;
+
+    int[] specs = genSilverNums(filename);
+    int rows = specs[0];
+    int cols = specs[1];
+    int time = specs[2];
+
+    int[] coords = genSilverCoords(filename, rows);
+    int r1 = coords[0]-1;
+    int c1 = coords[1]-1;
+    int r2 = coords[2]-1;
+    int c2 = coords[3]-1;
+
+    field = genSilverBoard(filename, rows, cols);
+
+    field[r1][c1] = 1;
+
+    for (int t = 1; t <= time; t++) {
+      for (int i = 0; i < rows; i++) {
+        for (int j = (t+i+r1+c1) % 2; j < cols; j+=2) {
+          if (field[i][j] >= 0) {
+            if (i > 0 && field[i-1][j] >= 0) {
+              field[i][j] += field[i-1][j];
+            }
+            if (i < rows - 1 && field[i+1][j] >= 0) {
+              field[i][j] += field[i+1][j];
+            }
+            if (j > 0 && field[i][j-1] >= 0) {
+              field[i][j] += field[i][j-1];
+            }
+            if (j < cols - 1 && field[i][j+1] >= 0) {
+              field[i][j] += field[i][j+1];
+            }
+          }
+        }
+      }
+      for (int x = 0; x < rows; x ++) {
+        for (int y = (t + x + r1 + c1 + 1) % 2; y < cols; y += 2) {
+          if (field[x][y] >= 0) field[x][y] = 0;
+        }
+      }
+    }
+    return field[r2][c2];
+  }
+
+  private static int[] genSilverNums(String filename) throws FileNotFoundException {
+    Scanner data = new Scanner(new File(filename));
+    String dimensions = data.nextLine();
+    int index = dimensions.indexOf(' ');
+    int rows = Integer.parseInt(dimensions.substring(0, index));
+    dimensions = dimensions.substring(index+1);
+    index = dimensions.indexOf(' ');
+    int cols = Integer.parseInt(dimensions.substring(0, index));
+    int time = Integer.parseInt(dimensions.substring(index+1));
+    return new int[] {rows, cols, time};
+  }
+
+  private static int[] genSilverCoords(String filename, int r) throws FileNotFoundException {
+    Scanner in = new Scanner(new File(filename));
+    for (int x = 0; x <= r; x ++) {
+      in.nextLine();
+    }
+    String line = in.nextLine();
+    int index = line.indexOf(' ');
+    int r1 = Integer.parseInt(line.substring(0, index));
+    line = line.substring(index+1);
+    index = line.indexOf(' ');
+    int c1 = Integer.parseInt(line.substring(0, index));
+    line = line.substring(index+1);
+    index = line.indexOf(' ');
+    int r2 = Integer.parseInt(line.substring(0, index));
+    int c2 = Integer.parseInt(line.substring(index+1));
+    return new int[] {r1, c1, r2, c2};
+  }
+
+  private static int[][] genSilverBoard(String filename, int r, int c) throws FileNotFoundException {
+    int[][] ans =  new int[r][c];
+    Scanner in = new Scanner(new File(filename));
+    in.nextLine();
+    for (int i = 0; i < r; i++) {
+      String line = in.nextLine();
+      for (int j = 0; j < c; j++) {
+        switch (line.charAt(j)) {
+          case '.': ans[i][j] = 0;
+          break;
+          case '*': ans[i][j] = -1;
+          break;
+          default: throw new IllegalStateException("illegal character");
+        }
+      }
+    }
+    return ans;
   }
 }
