@@ -2,7 +2,14 @@ import java.util.*;
 import java.io.*;
 public class  USACO {
   public static void main(String[] args) throws FileNotFoundException{
-    System.out.println(silver("ctravel.2.in"));
+    int[][] ary = {
+      {10, 10, 10},
+      {10, 10, 10},
+      {30, 10, 15}
+    };
+    printArr(ary);
+    dig(0, 0, 10, ary);
+    printArr(ary);
   }
 
   public static int bronze(String filename) {
@@ -25,6 +32,7 @@ public class  USACO {
       e = Integer.parseInt(vars[2]);
       n = Integer.parseInt(vars[3]);
 
+      //System.out.println(r + " " + c + " " + e + " " + n);
 
       //Reading the grid
       elevations = new int[r][c];
@@ -67,9 +75,10 @@ public class  USACO {
     }
   }
 
-  private static void dig(int r, int c, int depth, int[][] elevations) {
+  public static void dig(int r, int c, int depth, int[][] elevations) {
     int highest = findHighest(elevations, r, c);
     for (int x = 0; x < depth; x ++) {
+      //printArr(elevations);
       for (int y = r; y < r + 3; y ++) {
         for (int z = c; z < c + 3; z ++) {
           if (elevations[y][z] == highest) elevations[y][z] --;
@@ -79,17 +88,18 @@ public class  USACO {
     }
   }
 
-  private static int findHighest(int[][] elevations, int r, int c) {
+  public static int findHighest(int[][] elevations, int r, int c) {
     int output = 0;
     for (int x = r; x < r + 3; x ++) {
       for (int y = c; y < c + 3; y ++) {
-        if (output < elevations[r][c]) output = elevations[r][c];
+        //System.out.println(elevations[r][c]);
+        if (output < elevations[x][y]) output = elevations[x][y];
       }
     }
     return output;
   }
 
-  private static int findVolume(int[][] elevations, int height) {
+  public static int findVolume(int[][] elevations, int height) {
     //Finding the total depth
     int totalDepth = 0;
     for (int x[]: elevations) {
